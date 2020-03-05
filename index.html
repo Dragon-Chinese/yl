@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+<meta charset="UTF-8">
+<title>依林，3.15生日快乐!</title>
+
+</head>
+
+<style>
+body{
+  background:#ef6666; margin:0;
+  padding: 0;
+  overflow: hidden;
+}
+
+canvas {
+  background:#ef6666;
+  position: absolute;
+}
+
+div.metadata {
+  position: absolute;
+  bottom:0;
+  width: 100%;
+
+  font-family: Helvetica, Arial;
+  font-size:11px;
+  font-weight: bold;
+  text-align: center;
+  color: rgba(151,26,22,1);
+}
+div.metadata p {
+  height: 20px;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+  display:inline-block;
+  padding: 0 4px 3px 4px;
+  border-bottom: 2px solid rgba(151,26,22,1);
+  transition: all .2s;
+}
+a:hover {
+  padding: 0 4px 1px 4px;
+  border-bottom: 4px solid rgba(254,121,68,0.4);
+}
+
+div.title {
+  position: absolute;
+  top:0;
+  width: 100%; 
+  text-align:center;
+  font-family: 'Lato', sans-serif !important;
+  font-style: normal;
+  font-weight: 100;
+  font-size: 70px;
+  padding-top:40px;
+  color: rgba(254,255,240,1);
+}
+div.title1 {
+  position: absolute;
+  top:100px;
+  width: 100%; 
+  text-align:center;
+  font-family: 'Lato', sans-serif !important;
+  font-style: normal;
+  font-weight: 100;
+  font-size: 50px;
+  padding-top:40px;
+  color: rgb(200, 211, 55);
+}
+img {
+  margin-left: -100px;
+    position: absolute;
+    top: 16%;
+    width: 200px;
+    color: rgba(254,255,240,1);
+    left: 50%;
+}
+</style>
+<body>
+
+<link href='https://fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
+
+<canvas id="canvas" width="800" height="500"></canvas>
+
+<div class="title">依林，3.15生日快乐!</div>
+<div class="title1">Happy every day!</div>
+<img src="./WechatIMG886.jpeg" alt="">
+
+<script>
+
+var mul_table = [ 1,57,41,21,203,34,97,73,227,91,149,62,105,45,39,137,241,107,3,173,39,71,65,238,219,101,187,87,81,151,141,133,249,117,221,209,197,187,177,169,5,153,73,139,133,127,243,233,223,107,103,99,191,23,177,171,165,159,77,149,9,139,135,131,253,245,119,231,224,109,211,103,25,195,189,23,45,175,171,83,81,79,155,151,147,9,141,137,67,131,129,251,123,30,235,115,113,221,217,53,13,51,50,49,193,189,185,91,179,175,43,169,83,163,5,79,155,19,75,147,145,143,35,69,17,67,33,65,255,251,247,243,239,59,29,229,113,111,219,27,213,105,207,51,201,199,49,193,191,47,93,183,181,179,11,87,43,85,167,165,163,161,159,157,155,77,19,75,37,73,145,143,141,35,138,137,135,67,33,131,129,255,63,250,247,61,121,239,237,117,29,229,227,225,111,55,109,216,213,211,209,207,205,203,201,199,197,195,193,48,190,47,93,185,183,181,179,178,176,175,173,171,85,21,167,165,41,163,161,5,79,157,78,154,153,19,75,149,74,147,73,144,143,71,141,140,139,137,17,135,134,133,66,131,65,129,1];
+        
+   
+var shg_table = [0,9,10,10,14,12,14,14,16,15,16,15,16,15,15,17,18,17,12,18,16,17,17,19,19,18,19,18,18,19,19,19,20,19,20,20,20,20,20,20,15,20,19,20,20,20,21,21,21,20,20,20,21,18,21,21,21,21,20,21,17,21,21,21,22,22,21,22,22,21,22,21,19,22,22,19,20,22,22,21,21,21,22,22,22,18,22,22,21,22,22,23,22,20,23,22,22,23,23,21,19,21,21,21,23,23,23,22,23,23,21,23,22,23,18,22,23,20,22,23,23,23,21,22,20,22,21,22,24,24,24,24,24,22,21,24,23,23,24,21,24,23,24,22,24,24,22,24,24,22,23,24,24,24,20,23,22,23,24,24,24,24,24,24,24,23,21,23,22,23,24,24,24,22,24,24,24,23,22,24,24,25,23,25,25,23,24,25,25,24,22,25,25,25,24,23,24,25,25,25,25,25,25,25,25,25,25,25,25,23,25,23,24,25,25,25,25,25,25,25,25,25,24,22,25,25,23,25,25,20,24,25,24,25,25,22,24,25,24,25,24,25,25,24,25,25,25,25,22,25,25,25,24,25,24,25,18];
+
+		
+function boxBlurImage( imageID, canvasID, radius, blurAlphaChannel, iterations ){
+			
+ 	var img = document.getElementById( imageID );
+	var w = img.naturalWidth;
+    var h = img.naturalHeight;
+       
+	var canvas = document.getElementById( canvasID );
+      
+    canvas.style.width  = w + "px";
+    canvas.style.height = h + "px";
+    canvas.width = w;
+    canvas.height = h;
+    
+    var context = canvas.getContext("2d");
+    context.clearRect( 0, 0, w, h );
+    context.drawImage( img, 0, 0 );
+
+	if ( isNaN(radius) || radius < 1 ) return;
+	
+	if ( blurAlphaChannel )
+	{
+		boxBlurCanvasRGBA( canvasID, 0, 0, w, h, radius, iterations );
+	} else {
+		boxBlurCanvasRGB( canvasID, 0, 0, w, h, radius, iterations );
+	}
+	
+}
+
+
+function boxBlurCanvasRGBA( id, top_x, top_y, width, height, radius, iterations ){
+	if ( isNaN(radius) || radius < 1 ) return;
+	
+	radius |= 0;
+	
+	if ( isNaN(iterations) ) iterations = 1;
+	iterations |= 0;
+	if ( iterations > 3 ) iterations = 3;
+	if ( iterations < 1 ) iterations = 1;
+	
+	var canvas  = document.getElementById( id );
+	var context = canvas.getContext("2d");
+	var imageData;
+	
+	try {
+	  try {
+		imageData = context.getImageData( top_x, top_y, width, height );
+	  } catch(e) {
+	  
+		// NOTE: this part is supposedly only needed if you want to work with local files
+		// so it might be okay to remove the whole try/catch block and just use
+		// imageData = context.getImageData( top_x, top_y, width, height );
+		try {
+			netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
+			imageData = context.getImageData( top_x, top_y, width, height );
+		} catch(e) {
+			alert("Cannot access local image");
+			throw new Error("unable to access local image data: " + e);
+			return;
+		}
+	  }
+	} catch(e) {
+	  alert("Cannot access image");
+	  throw new Error("unable to access image data: " + e);
+	  return;
+	}
+			
+	var pixels = imageData.data;
+		
+	var rsum,gsum,bsum,asum,x,y,i,p,p1,p2,yp,yi,yw,idx,pa;		
+	var wm = width - 1;
+  	var hm = height - 1;
+    var wh = width * height;
+	var rad1 = radius + 1;
+    
+	var mul_sum = mul_table[radius];
+	var shg_sum = shg_table[radius];
+
+	var r = [];
+    var g = [];
+    var b = [];
+	var a = [];
+	
+	var vmin = [];
+	var vmax = [];
+  
+	while ( iterations-- > 0 ){
+		yw = yi = 0;
+	 
+		for ( y=0; y < height; y++ ){
+			rsum = pixels[yw]   * rad1;
+			gsum = pixels[yw+1] * rad1;
+			bsum = pixels[yw+2] * rad1;
+			asum = pixels[yw+3] * rad1;
+			
+			
+			for( i = 1; i <= radius; i++ ){
+				p = yw + (((i > wm ? wm : i )) << 2 );
+				rsum += pixels[p++];
+				gsum += pixels[p++];
+				bsum += pixels[p++];
+				asum += pixels[p]
+			}
+			
+			for ( x = 0; x < width; x++ ) {
+				r[yi] = rsum;
+				g[yi] = gsum;
+				b[yi] = bsum;
+				a[yi] = asum;
+
+				if( y==0) {
+					vmin[x] = ( ( p = x + rad1) < wm ? p : wm ) << 2;
+					vmax[x] = ( ( p = x - radius) > 0 ? p << 2 : 0 );
+				} 
+				
+				p1 = yw + vmin[x];
+				p2 = yw + vmax[x];
+				  
+				rsum += pixels[p1++] - pixels[p2++];
+				gsum += pixels[p1++] - pixels[p2++];
+				bsum += pixels[p1++] - pixels[p2++];
+				asum += pixels[p1]   - pixels[p2];
+					 
+				yi++;
+			}
+			yw += ( width << 2 );
+		}
+	  
+		for ( x = 0; x < width; x++ ) {
+			yp = x;
+			rsum = r[yp] * rad1;
+			gsum = g[yp] * rad1;
+			bsum = b[yp] * rad1;
+			asum = a[yp] * rad1;
+			
+			for( i = 1; i <= radius; i++ ) {
+			  yp += ( i > hm ? 0 : width );
+			  rsum += r[yp];
+			  gsum += g[yp];
+			  bsum += b[yp];
+			  asum += a[yp];
+			}
+			
+			yi = x << 2;
+			for ( y = 0; y < height; y++) {
+				
+				pixels[yi+3] = pa = (asum * mul_sum) >>> shg_sum;
+				if ( pa > 0 )
+				{
+					pa = 255 / pa;
+					pixels[yi]   = ((rsum * mul_sum) >>> shg_sum) * pa;
+					pixels[yi+1] = ((gsum * mul_sum) >>> shg_sum) * pa;
+					pixels[yi+2] = ((bsum * mul_sum) >>> shg_sum) * pa;
+				} else {
+					pixels[yi] = pixels[yi+1] = pixels[yi+2] = 0;
+				}				
+				if( x == 0 ) {
+					vmin[y] = ( ( p = y + rad1) < hm ? p : hm ) * width;
+					vmax[y] = ( ( p = y - radius) > 0 ? p * width : 0 );
+				} 
+			  
+				p1 = x + vmin[y];
+				p2 = x + vmax[y];
+
+				rsum += r[p1] - r[p2];
+				gsum += g[p1] - g[p2];
+				bsum += b[p1] - b[p2];
+				asum += a[p1] - a[p2];
+
+				yi += width << 2;
+			}
+		}
+	}
+	
+	context.putImageData( imageData, top_x, top_y );
+	
+}
+
+function boxBlurCanvasRGB( id, top_x, top_y, width, height, radius, iterations ){
+	if ( isNaN(radius) || radius < 1 ) return;
+	
+	radius |= 0;
+	
+	if ( isNaN(iterations) ) iterations = 1;
+	iterations |= 0;
+	if ( iterations > 3 ) iterations = 3;
+	if ( iterations < 1 ) iterations = 1;
+	
+	var canvas  = document.getElementById( id );
+	var context = canvas.getContext("2d");
+	var imageData;
+	
+	try {
+	  try {
+		imageData = context.getImageData( top_x, top_y, width, height );
+	  } catch(e) {
+	  
+		// NOTE: this part is supposedly only needed if you want to work with local files
+		// so it might be okay to remove the whole try/catch block and just use
+		// imageData = context.getImageData( top_x, top_y, width, height );
+		try {
+			netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
+			imageData = context.getImageData( top_x, top_y, width, height );
+		} catch(e) {
+			alert("Cannot access local image");
+			throw new Error("unable to access local image data: " + e);
+			return;
+		}
+	  }
+	} catch(e) {
+	  alert("Cannot access image");
+	  throw new Error("unable to access image data: " + e);
+	  return;
+	}
+			
+	var pixels = imageData.data;
+		
+	var rsum,gsum,bsum,asum,x,y,i,p,p1,p2,yp,yi,yw,idx;		
+	var wm = width - 1;
+  	var hm = height - 1;
+    var wh = width * height;
+	var rad1 = radius + 1;
+   
+	var r = [];
+    var g = [];
+    var b = [];
+	
+	var mul_sum = mul_table[radius];
+	var shg_sum = shg_table[radius];
+	
+	var vmin = [];
+	var vmax = [];
+  
+	while ( iterations-- > 0 ){
+		yw = yi = 0;
+	 
+		for ( y=0; y < height; y++ ){
+			rsum = pixels[yw]   * rad1;
+			gsum = pixels[yw+1] * rad1;
+			bsum = pixels[yw+2] * rad1;
+			
+			for( i = 1; i <= radius; i++ ){
+				p = yw + (((i > wm ? wm : i )) << 2 );
+				rsum += pixels[p++];
+				gsum += pixels[p++];
+				bsum += pixels[p++];
+			}
+			
+			for ( x = 0; x < width; x++ ){
+				r[yi] = rsum;
+				g[yi] = gsum;
+				b[yi] = bsum;
+				
+				if( y==0) {
+					vmin[x] = ( ( p = x + rad1) < wm ? p : wm ) << 2;
+					vmax[x] = ( ( p = x - radius) > 0 ? p << 2 : 0 );
+				} 
+				
+				p1 = yw + vmin[x];
+				p2 = yw + vmax[x];
+				  
+				rsum += pixels[p1++] - pixels[p2++];
+				gsum += pixels[p1++] - pixels[p2++];
+				bsum += pixels[p1++] - pixels[p2++];
+				 
+				yi++;
+			}
+			yw += ( width << 2 );
+		}
+	  
+		for ( x = 0; x < width; x++ ){
+			yp = x;
+			rsum = r[yp] * rad1;
+			gsum = g[yp] * rad1;
+			bsum = b[yp] * rad1;
+				
+			for( i = 1; i <= radius; i++ ){
+			  yp += ( i > hm ? 0 : width );
+			  rsum += r[yp];
+			  gsum += g[yp];
+			  bsum += b[yp];
+			}
+			
+			yi = x << 2;
+			for ( y = 0; y < height; y++){
+				pixels[yi]   = (rsum * mul_sum) >>> shg_sum;
+				pixels[yi+1] = (gsum * mul_sum) >>> shg_sum;
+				pixels[yi+2] = (bsum * mul_sum) >>> shg_sum;
+		   
+				if( x == 0 ) {
+					vmin[y] = ( ( p = y + rad1) < hm ? p : hm ) * width;
+					vmax[y] = ( ( p = y - radius) > 0 ? p * width : 0 );
+				} 
+				  
+				p1 = x + vmin[y];
+				p2 = x + vmax[y];
+
+				rsum += r[p1] - r[p2];
+				gsum += g[p1] - g[p2];
+				bsum += b[p1] - b[p2];
+				  
+				yi += width << 2;
+			}
+		}
+	}
+	context.putImageData( imageData, top_x, top_y );
+	
+}
+</script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+    function square(x){return x*x;}
+function heart_shape(t, a) {
+  var x = 16 * (Math.sin(t) * Math.sin(t) * Math.sin(t));
+  var y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+  return [x*a/12, y*a/15 * -1];
+}
+
+function rotate_point(pointX, pointY, originX, originY, angle, extrude) {
+  var slope = Math.atan2(pointY - originY, pointX - originX);
+  pointY = originY + Math.sin(slope) * extrude;
+  pointX = originX + Math.cos(slope) * extrude;
+  
+	angle = angle * Math.PI / 180.0;
+	return {
+		x: Math.cos(angle) * (pointX-originX) - Math.sin(angle) * (pointY-originY) + originX,
+		y: Math.sin(angle) * (pointX-originX) + Math.cos(angle) * (pointY-originY) + originY
+	};
+}
+
+var canvas = document.getElementsByTagName('canvas')[0];
+var ctx = canvas.getContext('2d');
+
+/*
+  Some global variables
+*/
+
+var center = [400,250],
+    pi = Math.PI,
+    lob = heart_shape;
+/* color, maxthicknes, minthickness, maxlength*/
+var colors = [
+  ["rgba(254,68,68,0.4)", 30, 20, pi/4],
+  ["rgba(255,85,85,0.5)", 15, 10, pi/2],
+  ["rgba(151,26,22,0.5)",  10, 8,  pi],
+  ["rgba(250,240,240,0.8)", 10, 8, 1.5*pi],
+  ["rgba(50,11,4,0.7)",     5, 3,  1.5*pi]
+];
+
+/*
+  A loop object
+*/
+function InfinityLoop(){
+  var pickedColor = colors[Math.round(Math.random() * (colors.length -1))];
+  
+  this.a = Math.random() * 50 + 150;
+  //this.length = (Math.random() * 0.75 + 0.25) * pi; //Max = 2*PI
+  this.length = Math.random() * pickedColor[3] + (0.25*pi);
+  this.position = Math.random() * 2 * pi; //0.5 * pi;
+  this.speed = (2 * pi / 100) - (Math.random() * ( pi / 200));
+  this.heightAdjust = Math.random() * 0.2 + 1;
+  this.center = {
+    x: Math.random() * 20 - 10 + center[0],
+    y: Math.random() * 20 - 10 + center[1],
+  }
+
+
+
+  this.color = pickedColor[0];//"rgba(200, 180, 0, 0.75)";
+  this.thickness = Math.random() * pickedColor[1] + pickedColor[2];
+  
+  this.computePath = function(start, length, a) {
+    var main_points = [],
+        extruded_left_points = [],
+        extruded_right_points = [];
+    var segments = Math.round(this.length / this.speed);
+    
+    var lastPoint = null;
+    
+    for(i=0; i<segments; i++) {
+      
+      t = this.speed * i + this.position;
+      if(t > 2 * pi) t = t - 2 * pi;
+      if(t < 0) t = 2 * pi - t;
+      
+      var main_point = lob(t, a);
+          main_point[1] = main_point[1] * this.heightAdjust + this.center.y;
+      var newPoint = {
+        x: main_point[0] + this.center.x,
+        y: main_point[1] 
+      };
+
+      if(lastPoint == null) {
+        var prevPoint = lob(t - this.speed, a);
+        prevPoint[1] = prevPoint[1] * this.heightAdjust + this.center.y;
+        lastPoint = {x: prevPoint[0] + this.center.x, y:prevPoint[1]};
+      }
+
+      var ribbonReductionIndex = ((i / (segments / 200)));
+      //ribbonReductionIndex *= (Math.cos(2*t)+1);
+      var ribbonThickness = Math.sin(pi/2*(ribbonReductionIndex / 100))*this.thickness;      
+
+      var extrudedLeftPoint = rotate_point(
+        lastPoint.x, lastPoint.y, 
+        newPoint.x, newPoint.y, 90, - ribbonThickness/2
+      );
+      extruded_left_points.push(extrudedLeftPoint);
+
+      var extrudedRightPoint = rotate_point(
+        lastPoint.x, lastPoint.y, 
+        newPoint.x, newPoint.y, 90, ribbonThickness/2
+      );
+      extruded_right_points.push(extrudedRightPoint);
+      
+      lastPoint = newPoint;
+    }
+    var points = extruded_left_points.concat(extruded_right_points.reverse());
+    
+    return points;
+  }
+  
+  this.drawPath = function() {
+    var leafPath = this.computePath(
+      this.position, 
+      this.length, 
+      this.a, 5);
+    
+    this.position += this.speed;
+    
+    ctx.fillStyle = this.color;   
+    ctx.beginPath();
+    ctx.moveTo(leafPath[0].x, leafPath[0].y);
+    for(i=1;i<leafPath.length;i++) {
+      ctx.lineTo(leafPath[i].x, leafPath[i].y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    
+    if(this.position > 2 * pi) {
+      this.position = this.position - 2 * pi;
+    }
+  }
+  
+  this.reposition = function(){
+    this.center = {
+      x: Math.random() * 20 - 10 + center[0],
+      y: Math.random() * 20 - 10 + center[1],
+    }
+  }
+  
+  this.tick = function(timestamp){
+    this.drawPath();
+  }
+  
+  return this;
+}
+
+
+
+/*
+  Get the animation started
+*/
+var Scene = function(){
+  
+  var loops = [];
+  var lastTick = 0
+  
+  for(var i=0; i<50; i++) {
+    loops.push(new InfinityLoop());
+  }
+  
+  var clearCanvas = function() {
+    ctx.fillStyle="rgba(200,60,60,.1)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
+  
+  var animate = function(timestamp) {
+    /*skip frames if more than 60/second*/
+    if(timestamp - lastTick < 1000/60){
+      requestAnimationFrame(animate);
+      return;
+    }
+
+    clearCanvas();
+    for(var i=0; i<loops.length; i++) {
+      loops[i].tick(timestamp);
+    }
+
+
+    lastTick = timestamp;
+    requestAnimationFrame(animate);
+  }
+  
+  this.run = function() {
+    requestAnimationFrame(animate); 
+  }
+  
+  this.reset = function() {
+    loops = [];
+    lastTick = 0
+  
+    for(var i=0; i<50; i++) {
+      loops.push(new InfinityLoop());
+    }
+  }
+  
+  this.reposition = function() {
+    for(i=0; i<loops.length; i++) {
+      loops[i].reposition();
+    }
+  }
+  
+  return this;
+}
+
+
+var scene = new Scene();
+scene.run();
+
+$(window).resize(function(){
+  canvas.width = $(window).width();
+  canvas.height = $(window).height();
+  center[0] = canvas.width/2;
+  center[1] = canvas.height/2;    
+  scene.reposition();
+}).resize();
+
+function reset(){
+  scene.reset();
+}
+</script>
+
+
+
+
+</body>
+
+</html>
